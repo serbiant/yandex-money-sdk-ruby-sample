@@ -1,40 +1,73 @@
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <% caption = "Yandex.Money ruby SDK sample app"%>
+  <title><%= caption %></title>
+
+  <link href="http://yandex.st/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+      body {
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+
+      .container {
+        max-width: 730px;
+      }
+
+      .input {
+        width: 100%;
+      }
+
+    </style>
 </head>
 <body>
 
-<% if token %>
-  <a href="/">main</a>
-  <!-- token accuired -->
-  <h1>API Methods</h1>
-  <h2>Information about a user's account</h2>
-  <ul>
-    <!-- !!! NEVER EVER output user token in production env !!! -->
-    <li><a href="/account-info?token=<%= token %>">account info</a></li>
-    <li><a href="/operation-history?token=<%= token %>">operation history</a></li>
-    <li><a href="/operation-history?token=<%= token %>&records=3">operation history (last 3)</a></li>
-    <li><a href="/request-payment?token=<%= token %>">request payment (1 RUB)</a></li>
-    <% if defined? show_process_payment %>
-      <!-- request payment was done before -->
-      <li><a href="/process-payment?token=<%= token %>&request_id=<%= request_id %>">PROCESS PAYMENT (1.01 RUB)</a></li>
+  <div class="container">
+    <h2><%= caption %></h2>
+    <% if token %>
+      <a href="/">main</a>
+      <!-- token accuired -->
+      <h1>API Methods</h1>
+      <h2>Information about a user's account</h2>
+      <ul>
+        <!-- !!! NEVER EVER output user token in production env !!! -->
+        <li><a href="/account-info?token=<%= token %>">account info</a></li>
+        <li><a href="/operation-history?token=<%= token %>">operation history</a></li>
+        <li><a href="/operation-history?token=<%= token %>&records=3">operation history (last 3)</a></li>
+        <li><a href="/request-payment?token=<%= token %>">request payment (0.02 RUB)</a></li>
+        <% if defined? show_process_payment %>
+          <!-- request payment was done before -->
+          <li><a href="/process-payment?token=<%= token %>&request_id=<%= request_id %>">PROCESS PAYMENT (1.01 RUB)</a></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <!-- form for obtaining token -->
+      <form action="/obtain-token" method="get">
+        <label>Scope</label>
+        <p><input class="input" type="text" name="scope" value='account-info operation-history payment.to-account("410011161616877").limit(30,1) incoming-transfers'/></p>
+        <p><button class="btn btn-default" type="submit">Obtain token</button></p>
+        <p>Documentation about scope permissions is <a href="http://api.yandex.ru/money/doc/dg/concepts/protocol-rights.xml">here</a>.</p>
+      </form>
     <% end %>
-  </ul>
-<% else %>
-  <!-- form for obtaining token -->
-  <form action="/obtain-token" method="get">
-    <label>
-      Scope: <input type="text" name="scope" value='account-info operation-history payment-p2p incoming-transfers'/>
-      <a href="http://api.yandex.ru/money/doc/dg/concepts/protocol-rights.xml">documentation</a>
-    </label>
-    <input type="submit" value="Obtain token" />
-  </form>
-<% end %>
 
-<!-- API call result -->
-<% if defined? result %>
-  <p><strong>RESULT</strong></p>
-  <pre><%= result %></pre>
-<% end %>
+    <!-- API call result -->
+    <% if defined? result %>
+      <p><strong>RESULT</strong></p>
+      <pre><%= result %></pre>
+    <% end %>
+  </div>
 
 </body>
 </html>

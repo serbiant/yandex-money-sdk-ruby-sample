@@ -7,7 +7,7 @@ CONFIG = {
   client_id: "PROVIDE_CLIENT_ID_HERE",
   redirect_uri: "http://127.0.0.1:4567/redirect",
   client_secret: "PROVIDE_CLIENT_SECRET_HERE"
-}
+} 
 
 get '/' do
   erb :index, locals: { token: params[:token] }
@@ -33,8 +33,8 @@ get '/request-payment' do
   api = YandexMoney::Api.new(token: params[:token])
   result = api.request_payment(
     pattern_id: "p2p",
-    to: "41001565326286",
-    amount_due: "1.0",
+    to: "410011161616877",
+    amount_due: "0.02",
     comment: "test payment comment from yandex-money-ruby",
     message: "test payment message from yandex-money-ruby",
     label: "testPayment"
