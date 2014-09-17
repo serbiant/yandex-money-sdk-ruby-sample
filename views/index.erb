@@ -39,8 +39,8 @@
     <% if token %>
       <a href="/">main</a>
       <!-- token accuired -->
-      <h1>API Methods</h1>
-      <h2>Information about a user's account</h2>
+      <h2>API Methods</h2>
+      <h3>Information about a user's account</h3>
       <ul>
         <!-- !!! NEVER EVER output user token in production env !!! -->
         <li><a href="/account-info?token=<%= token %>">account info</a></li>
@@ -49,7 +49,7 @@
         <li><a href="/request-payment?token=<%= token %>">request payment (0.02 RUB)</a></li>
         <% if defined? show_process_payment %>
           <!-- request payment was done before -->
-          <li><a href="/process-payment?token=<%= token %>&request_id=<%= request_id %>">PROCESS PAYMENT (1.01 RUB)</a></li>
+          <li><a href="/process-payment?token=<%= token %>&request_id=<%= request_id %>">process payment (0.02 RUB)</a> <span class="label label-danger">Warning</span> It will spend 0.02 RUB from your account</li>           
         <% end %>
       </ul>
     <% else %>
