@@ -47,9 +47,13 @@
         <li><a href="/operation-history">operation history</a></li>
         <li><a href="/operation-history?records=3">operation history (last 3)</a></li>
         <li><a href="/request-payment">request payment (0.02 RUB)</a></li>
+        <li><a href="/request-payment-megafon">request payment megafon (2 RUB)</a></li>
         <% if defined? show_process_payment %>
           <!-- request payment was done before -->
-          <li><a href="/process-payment?request_id=<%= request_id %>">process payment (0.02 RUB)</a> <span class="label label-danger">Warning</span> It will spend 0.02 RUB from your account</li>           
+          <li>
+            <a href="/process-payment?request_id=<%= request_id %>">process payment (<%= amount %> RUB)</a>
+            <span class="label label-danger">Warning</span> It will spend <%= amount %> RUB from your account
+          </li>
         <% end %>
       </ul>
     <% else %>

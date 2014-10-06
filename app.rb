@@ -37,10 +37,11 @@ end
 
 get '/request-payment' do
   api = YandexMoney::Api.new(token: session[:token])
+  amount = "0.02"
   result = api.request_payment(
     pattern_id: "p2p",
     to: "410011161616877",
-    amount_due: "0.02",
+    amount_due: amount,
     comment: "test payment comment from yandex-money-ruby",
     message: "test payment message from yandex-money-ruby",
     label: "testPayment"
@@ -49,7 +50,29 @@ get '/request-payment' do
     result: result.to_yaml,
     token: session[:token],
     show_process_payment: true,
-    request_id: result.request_id
+    request_id: result.request_id,
+    amount: amount
+  }
+end
+
+get '/request-payment-megafon' do
+  api = YandexMoney::Api.new(token: session[:token])
+  amount = "2"
+  result = api.request_payment(
+    pattern_id: "337",
+    sum: amount,
+    PROPERTY1: "921",
+    PROPERTY2: "3020052",
+    comment: "test payment comment from yandex-money-ruby",
+    message: "test payment message from yandex-money-ruby",
+    label: "testPayment"
+  )
+  erb :index, locals: {
+    result: result.to_yaml,
+    token: session[:token],
+    show_process_payment: true,
+    request_id: result.request_id,
+    amount: amount
   }
 end
 
