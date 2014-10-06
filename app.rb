@@ -2,35 +2,41 @@ require 'sinatra'
 require 'yandex_money/api'
 require 'yaml'
 
+# Enable sessions for storing token safely
+enable :sessions
+
+# Change this for your application (http://www.sinatrarb.com/intro.html#Using%20Sessions)
+set :session_secret, 'mysupersecret'
+
 # To get this data, register application at https://sp-money.yandex.ru/myservices/new.xml
 CONFIG = {
-  client_id: "PROVIDE_CLIENT_ID_HERE",
+  client_id: "B08E93852757D204A4FCADA4A229835D7AABD3A2B106B46ECCB245D70D73C515",
   redirect_uri: "http://127.0.0.1:4567/redirect",
-  client_secret: "PROVIDE_CLIENT_SECRET_HERE"
+  client_secret: "B21956F4A83DF4CBDB464DCB6697BF5364B3A9B036E665E0D522AD0E9A87884D0080A165D0F3BB71B48506B5DA61C822D51CF4CC587A87E4C9729908A0B0F67B"
 } 
 
 get '/' do
-  erb :index, locals: { token: params[:token] }
+  erb :index, locals: { token: session[:token] }
 end
 
 get '/account-info' do
-  api = YandexMoney::Api.new(token: params[:token])
+  api = YandexMoney::Api.new(token: session[:token])
   result = api.account_info.to_yaml
-  erb :index, locals: { result: result, token: params[:token] }
+  erb :index, locals: { result: result, token: session[:token] }
 end
 
 get '/operation-history' do
-  api = YandexMoney::Api.new(token: params[:token])
+  api = YandexMoney::Api.new(token: session[:token])
   if params[:records]
     result = api.operation_history(records: params[:records].to_i).to_yaml
   else
     result = api.operation_history.to_yaml
   end
-  erb :index, locals: { result: result, token: params[:token] }
+  erb :index, locals: { result: result, token: session[:token] }
 end
 
 get '/request-payment' do
-  api = YandexMoney::Api.new(token: params[:token])
+  api = YandexMoney::Api.new(token: session[:token])
   result = api.request_payment(
     pattern_id: "p2p",
     to: "410011161616877",
@@ -41,18 +47,23 @@ get '/request-payment' do
   )
   erb :index, locals: {
     result: result.to_yaml,
-    token: params[:token],
+    token: session[:token],
     show_process_payment: true,
     request_id: result.request_id
   }
 end
 
 get '/process-payment' do
-  api = YandexMoney::Api.new(token: params[:token])
+  api = YandexMoney::Api.new(token: session[:token])
   result = api.process_payment(
     request_id: params[:request_id]
   ).to_yaml
-  erb :index, locals: { result: result, token: params[:token] }
+  erb :index, locals: { result: result, token: session[:token] }
+end
+
+get '/logout' do
+  session[:token] = nil
+  redirect "/"
 end
 
 # OBTAINING TOKEN CODE
@@ -76,7 +87,8 @@ get '/redirect' do
   api.code = params[:code]
   api.obtain_token
   if api.token
-    redirect "/?token=#{api.token}"
+    session[:token] = api.token
+    redirect "/"
   else
     raise 'Error obtaining token!'
   end
